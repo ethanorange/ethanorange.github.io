@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GK 動態提領計算機 - Guyton-Klinger Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <main class="container">
+        <header>
+            <h1>GK 動態提領模擬器</h1>
+            <p class="subtitle">Guyton-Klinger Dynamic Withdrawal Strategy</p>
+        </header>
+
+        <div class="dashboard">
+            <aside class="glass-panel input-section">
+                <h2>設定參數</h2>
+                <form id="simulatorForm">
+                    <div class="form-group">
+                        <label for="initialPortfolio">初始投資本金</label>
+                        <div class="input-wrapper">
+                            <span class="prefix">$</span>
+                            <input type="number" id="initialPortfolio" value="10000000" min="0" step="10000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="initialWithdrawalRate">初始提領率 (%)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="initialWithdrawalRate" value="4.0" min="0" step="0.1" required>
+                            <span class="suffix">%</span>
+                        </div>
+                        <small>傳統4%法則預設為4%</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="simulationYears">模擬年數</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="simulationYears" value="30" min="1" max="100" required>
+                            <span class="suffix">年</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expectedReturn">預期報酬率</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="expectedReturn" value="7.0" step="0.1" required>
+                                <span class="suffix">%</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnVolatility">報酬率波動度</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="returnVolatility" value="15.0" step="0.1" required>
+                                <span class="suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inflationRate">預期通膨率</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="inflationRate" value="2.5" step="0.1" required>
+                            <span class="suffix">%</span>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h3>GK 護欄設定</h3>
+                    <div class="toggle-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="useInflationRule" checked>
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-text">通膨規則 (若虧損則凍結調漲)</span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="useCapitalRule" checked>
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-text">保本規則 (提領率過高時減薪10%)</span>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="useProsperityRule" checked>
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-text">繁榮規則 (提領率過低時加薪10%)</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">開始模擬</button>
+                </form>
+            </aside>
+
+            <section class="results-section">
+                <div class="glass-panel summary-cards">
+                    <div class="card">
+                        <div class="card-title">最終資產價值</div>
+                        <div class="card-value" id="finalPortfolioValue">$0</div>
+                        <div class="card-sub" id="survivalStatus">計算中...</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">總提領金額</div>
+                        <div class="card-value" id="totalWithdrawalValue">$0</div>
+                        <div class="card-sub">模擬期間累計</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">護欄觸發次數</div>
+                        <div class="card-value" id="guardrailTriggers">0 次</div>
+                        <div class="card-sub">加薪 / 減薪</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel chart-container">
+                    <canvas id="simulationChart"></canvas>
+                </div>
+                
+                <div class="glass-panel table-container">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>年度</th>
+                                <th>期初資產</th>
+                                <th>市場報酬</th>
+                                <th>提領金額</th>
+                                <th>實際提領率</th>
+                                <th>期末資產</th>
+                                <th>護欄動作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
